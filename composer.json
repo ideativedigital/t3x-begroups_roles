@@ -1,5 +1,5 @@
 {
-    "name": "cron-eu/begroups-roles",
+    "name": "ideative/begroups-roles",
     "type": "typo3-cms-extension",
     "description": "Use backend user groups as switchable roles",
     "keywords": [

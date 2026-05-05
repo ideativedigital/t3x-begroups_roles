@@ -5,10 +5,11 @@
 
 Use backend user groups as switchable roles
 
-Note: this is a fork from https://github.com/cron-eu/t3x-begroups_roles,
+**Note: this is a fork from https://github.com/cron-eu/t3x-begroups_roles,
 itself a fork of https://github.com/IchHabRecht/begroups_roles.
 It adds support for TYPO3 12, dropping support for any older versions of TYPO3.
-Labels, code and icons have been cleaned up.
+Labels, code and icons have been cleaned up. Tests have not been reimplemented.
+It is released but is not meant to be an official version.**
 
 ![Role switcher](Documentation/Images/role_switcher.png)
 
