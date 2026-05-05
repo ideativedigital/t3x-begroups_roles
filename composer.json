@@ -8,6 +8,7 @@
         "Group",
         "Backend"
     ],
+	"version": "4.0.0",
     "homepage": "https://github.com/IchHabRecht/begroups_roles",
     "license": "GPL-2.0-or-later",
     "authors": [
@@ -28,11 +29,11 @@
         }
     ],
     "require": {
-        "typo3/cms-core": "^8.7 || ^9.5 || ^10.4 || ^11.5"
+        "typo3/cms-core": "^12.4"
     },
-    "require-dev": {
-        "nimut/testing-framework": "5.x-dev"
-    },
+	"require-dev": {
+		"typo3/testing-framework": "^8.0"
+	},
     "autoload": {
         "psr-4": {
             "IchHabRecht\\BegroupsRoles\\": "Classes/"

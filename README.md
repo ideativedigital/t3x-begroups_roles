@@ -5,9 +5,10 @@
 
 Use backend user groups as switchable roles
 
-Note: this is a fork from https://github.com/IchHabRecht/begroups_roles
-with improvements needed for cron-eu projects, most notably TYPO3 v11
-support.
+Note: this is a fork from https://github.com/cron-eu/t3x-begroups_roles,
+itself a fork of https://github.com/IchHabRecht/begroups_roles.
+It adds support for TYPO3 12, dropping support for any older versions of TYPO3.
+Labels, code and icons have been cleaned up.
 
 ![Role switcher](Documentation/Images/role_switcher.png)
 
@@ -22,11 +23,9 @@ composer require cron-eu/begroups-roles
 ## Usage
 
 1. Add multiple backend groups, each for one purpose
-   - Tick the checkbox `Use this group as role` 
+   - Tick the checkbox `Use this group as role`
    - Limit the modules, tables and database mount to the purpose
-   
-2. For convenience add the created groups to a parent group 
 
-3. Assign the created (parent) group to backend users
+2. Assign the created (parent) group to backend users
    - Tick the checkbox `Use groups as roles`
    - To allow only one role group simultaneously, tick the checkbox `Restrict to one group`

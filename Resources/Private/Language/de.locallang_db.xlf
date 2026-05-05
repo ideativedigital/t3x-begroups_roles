@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2016-08-30T16:54:31Z" product-name="begroups_roles">
-		<header />
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2016-08-30T16:54:31Z"
+	      product-name="begroups_roles">
+		<header/>
 		<body>
 			<trans-unit id="be_groups.tx_begroupsroles_title">
 				<target>Backend-Benutzer-Rollen</target>
@@ -9,14 +10,23 @@
 			<trans-unit id="be_groups.tx_begroupsroles_isrole">
 				<target>Diese Gruppe als Rolle verwenden</target>
 			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_isrole.description">
+				<target>Fügt der Toolbar für den Benutzer ein Icon hinzu, um nur diese Gruppe zu nutzen.</target>
+			</trans-unit>
 			<trans-unit id="be_users.tx_begroupsroles_title">
 				<target>Backend-Benutzer-Rollen</target>
 			</trans-unit>
 			<trans-unit id="be_users.tx_begroupsroles_enabled">
 				<target>Gruppen als Rollen verwenden</target>
 			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_enabled.description">
+				<target>Fügt der Toolbar ein Icon hinzu, um nur eine der definierten Gruppen zu nutzen.</target>
+			</trans-unit>
 			<trans-unit id="be_users.tx_begroupsroles_limit">
 				<target>Auf eine Gruppe beschränken</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_limit.description">
+				<target>Stellt sicher, dass nur eine der definierten Gruppen zeitgleich genutzt werden kann. Nach dem Login wird die erste Gruppe als Standard verwendet.</target>
 			</trans-unit>
 		</body>
 	</file>

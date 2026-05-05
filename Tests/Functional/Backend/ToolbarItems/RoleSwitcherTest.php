@@ -26,19 +26,19 @@ namespace IchHabRecht\BegroupsRoles\Tests\Functional\Backend\ToolbarItems;
  ***************************************************************/
 
 use IchHabRecht\BegroupsRoles\Backend\ToolbarItems\RoleSwitcher;
-use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 class RoleSwitcherTest extends FunctionalTestCase
 {
     /**
      * @var array
      */
-    protected $testExtensionsToLoad = [
+    protected array $testExtensionsToLoad = [
         'typo3conf/ext/begroups_roles',
     ];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,12 +46,7 @@ class RoleSwitcherTest extends FunctionalTestCase
         $this->importDataSet($fixturePath . 'be_groups.xml');
         $this->importDataSet($fixturePath . 'be_users.xml');
 
-        if (method_exists(Bootstrap::class, 'getInstance')) {
-            $bootstrap = Bootstrap::getInstance();
-        } else {
-            $bootstrap = Bootstrap::class;
-        }
-        call_user_func([$bootstrap, 'initializeLanguageObject']);
+        Bootstrap::initializeLanguageObject();
     }
 
     /**

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace IchHabRecht\BegroupsRoles\Hook;
 
 /***************************************************************
@@ -25,6 +28,7 @@ namespace IchHabRecht\BegroupsRoles\Hook;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Authentication\GroupResolver;
@@ -32,7 +36,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -41,15 +44,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class SwitchUserRoleHook
 {
-    /**
-     * @var BackendUserAuthentication
-     */
-    protected $backendUser;
-
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected BackendUserAuthentication $backendUser;
+    protected Connection $connection;
 
     public function __construct(
         BackendUserAuthentication $backendUser = null,
@@ -61,8 +57,9 @@ class SwitchUserRoleHook
 
     /**
      * Assign user group from session data
+     * @throws \Doctrine\DBAL\Exception
      */
-    public function setUserGroup()
+    public function setUserGroup(): void
     {
         if (empty($this->backendUser->user['tx_begroupsroles_enabled'])) {
             return;
@@ -73,10 +70,16 @@ class SwitchUserRoleHook
             $role = 0;
 
             $usergroups = $this->backendUser->user[$this->backendUser->usergroup_column];
-            $this->backendUser->user['tx_begroupsroles_groups'] = implode(',', array_unique(array_merge(
-                GeneralUtility::intExplode(',', $usergroups, true),
-                $this->getUsergroups($usergroups)
-            )));
+            $this->backendUser->user['tx_begroupsroles_groups'] = implode(
+                ',',
+                array_unique(
+                    array_merge(
+                        GeneralUtility::intExplode(',', $usergroups, true),
+                        $this->getUsergroups($usergroups)
+                    )
+                )
+            );
+            // Store the list of groups the user is part of (direct or inherited)
             $queryBuilder = $this->connection->createQueryBuilder();
             $queryBuilder->update($this->backendUser->user_table)
                 ->where(
@@ -86,7 +89,7 @@ class SwitchUserRoleHook
                     )
                 )
                 ->set('tx_begroupsroles_groups', $this->backendUser->user['tx_begroupsroles_groups'])
-                ->execute();
+                ->executeStatement();
         }
 
         $possibleUsergroups = GeneralUtility::intExplode(',', $this->backendUser->user['tx_begroupsroles_groups'] ?? '', true);
@@ -98,7 +101,7 @@ class SwitchUserRoleHook
                 ->where(
                     $expressionBuilder->in(
                         'uid',
-                        $queryBuilder->createNamedParameter($possibleUsergroups, Connection::PARAM_INT_ARRAY)
+                        $queryBuilder->createNamedParameter($possibleUsergroups, ArrayParameterType::INTEGER)
                     ),
                     $expressionBuilder->eq(
                         'tx_begroupsroles_isrole',
@@ -106,8 +109,8 @@ class SwitchUserRoleHook
                     )
                 )
                 ->orderBy('title')
-                ->execute()
-                ->fetchAll();
+                ->executeQuery()
+                ->fetchAllAssociative();
 
             $rows = array_combine(array_map('intval', array_column($rows, 'uid')), $rows);
             $orderedUsergroups = array_keys(array_intersect_key($rows, array_flip($possibleUsergroups)));
@@ -116,36 +119,35 @@ class SwitchUserRoleHook
         }
         if (in_array($role, $possibleUsergroups, true)) {
             $this->backendUser->user[$this->backendUser->usergroup_column] = $role;
-            $typo3Version = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-                ? (new Typo3Version())->getVersion()
-                : TYPO3_version;
-            if (version_compare($typo3Version, '11.5', '>=')) {
-                $groupResolver = GeneralUtility::makeInstance(GroupResolver::class);
-                $groups = $groupResolver->resolveGroupsForUser($this->backendUser->user, $this->backendUser->usergroup_table);
-                $dbMountPoints = [];
-                $fileMountPoints = [];
-                $this->backendUser->userGroupsUID = [];
-                foreach ($groups as $group) {
-                    $this->backendUser->userGroupsUID[] = $group['uid'];
-                    $dbMountPoints = array_merge($dbMountPoints, GeneralUtility::intExplode(',', $group['db_mountpoints'] ?? '', true));
-                    $fileMountPoints = array_merge($fileMountPoints, GeneralUtility::intExplode(',', $group['file_mountpoints'] ?? '', true));
-                }
-                $this->backendUser->user['db_mountpoints'] = implode(',', array_unique($dbMountPoints));
-                $this->backendUser->user['file_mountpoints'] = implode(',', array_unique($fileMountPoints));
+            $groupResolver = GeneralUtility::makeInstance(GroupResolver::class);
+            $groups = $groupResolver->resolveGroupsForUser($this->backendUser->user, $this->backendUser->usergroup_table);
+            $dbMountPoints = [];
+            $fileMountPoints = [];
+            $this->backendUser->userGroupsUID = [];
+            foreach ($groups as $group) {
+                $this->backendUser->userGroupsUID[] = $group['uid'];
+                $dbMountPoints = array_merge(
+                    $dbMountPoints,
+                    GeneralUtility::intExplode(',', $group['db_mountpoints'] ?? '', true)
+                );
+                $fileMountPoints = array_merge(
+                    $fileMountPoints,
+                    GeneralUtility::intExplode(',', $group['file_mountpoints'] ?? '', true)
+                );
             }
+            $this->backendUser->user['db_mountpoints'] = implode(',', array_unique($dbMountPoints));
+            $this->backendUser->user['file_mountpoints'] = implode(',', array_unique($fileMountPoints));
             if (!empty($this->backendUser->user['admin'])) {
                 $this->backendUser->user['options'] |= Permission::PAGE_SHOW | Permission::PAGE_EDIT;
                 $this->backendUser->user['admin'] = 0;
             }
-            if (class_exists('TYPO3\\CMS\\Core\\Context\\Context')) {
-                GeneralUtility::makeInstance(Context::class)->setAspect(
-                    'backend.user',
-                    GeneralUtility::makeInstance(
-                        UserAspect::class,
-                        $this->backendUser
-                    )
-                );
-            }
+            GeneralUtility::makeInstance(Context::class)->setAspect(
+                'backend.user',
+                GeneralUtility::makeInstance(
+                    UserAspect::class,
+                    $this->backendUser
+                )
+            );
         } else {
             $role = 0;
         }
@@ -153,11 +155,12 @@ class SwitchUserRoleHook
     }
 
     /**
-     * @param int $groupList
+     * @param string $groupList
      * @param array $processedUsergroups
      * @return array
+     * @throws \Doctrine\DBAL\Exception
      */
-    protected function getUsergroups($groupList, $processedUsergroups = [])
+    protected function getUsergroups(string $groupList, array $processedUsergroups = []): array
     {
         $queryBuilder = $this->connection->createQueryBuilder();
         $queryBuilder->getRestrictions()->add(GeneralUtility::makeInstance(HiddenRestriction::class));
@@ -173,25 +176,14 @@ class SwitchUserRoleHook
                     'uid',
                     $queryBuilder->createNamedParameter(
                         GeneralUtility::intExplode(',', $groupList, true),
-                        Connection::PARAM_INT_ARRAY
-                    )
-                ),
-                $expressionBuilder->orX(
-                    $expressionBuilder->eq(
-                        'lockToDomain',
-                        $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
-                    ),
-                    $expressionBuilder->isNull('lockToDomain'),
-                    $expressionBuilder->eq(
-                        'lockToDomain',
-                        $queryBuilder->createNamedParameter(GeneralUtility::getIndpEnv('HTTP_HOST'), \PDO::PARAM_STR)
+                        ArrayParameterType::INTEGER
                     )
                 )
             )
-            ->execute();
+            ->executeQuery();
 
         $usergroups = [];
-        while ($row = $statement->fetch()) {
+        while ($row = $statement->fetchAssociative()) {
             if (isset($processedUsergroups[$row['uid']])) {
                 continue;
             }

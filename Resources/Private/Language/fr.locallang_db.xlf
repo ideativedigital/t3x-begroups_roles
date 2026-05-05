@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="fr" datatype="plaintext" original="messages" date="2016-08-30T16:54:31Z"
+	      product-name="begroups_roles">
+		<header/>
+		<body>
+			<trans-unit id="be_groups.tx_begroupsroles_title">
+				<target>Rôles des groupes backend</target>
+			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_isrole">
+				<target>Utiliser ce groupe en tant que rôle</target>
+			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_isrole.description">
+				<target>Ajoute ce groupe à la liste des rôles qu'un utilisateur pourra prendre.</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_title">
+				<target>Rôles de l'utilisateur backend</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_enabled">
+				<target>Utiliser les groupes comme rôles</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_enabled.description">
+				<target>Active un sélecteur dans la barre d'outil pour que l'utilisateur puisse changer de groupe (rôle).</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_limit">
+				<target>Limiter à un groupe</target>
+			</trans-unit>
+			<trans-unit id="be_users.tx_begroupsroles_limit.description">
+				<target>
+					Assure que seul un des groupes définis puisse être utilisé en même temps, sinon l'utilisateur peut aussi prendre tous les rôles en même temps.
+					Lors du login, le premier groupe est utilisé comme groupe par défaut.
+				</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
