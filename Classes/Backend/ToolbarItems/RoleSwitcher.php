@@ -127,7 +127,7 @@ class RoleSwitcher implements ToolbarItemInterface
         foreach ($rows as $row) {
             $uid = (int)$row['uid'];
             if (!in_array($uid, $excludedGroups, true)) {
-                $this->groups[] = [
+                $this->groups[$uid] = [
                     'uid' => $uid,
                     'title' => $row['title'],
                 ];
