@@ -25,6 +25,8 @@ composer require cron-eu/begroups-roles
 
 1. Add multiple backend groups, each for one purpose
    - Tick the checkbox `Use this group as role`
+   - Tick the checkbox `Exclude subgroups` to exclude the subgroups of this group
+     (otherwise all subgroups that are marked as role will also appear in the selector)
    - Limit the modules, tables and database mount to the purpose
 
 2. Assign the created (parent) group to backend users

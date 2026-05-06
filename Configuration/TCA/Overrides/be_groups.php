@@ -11,10 +11,31 @@ $tempColumns = [
         'description' => 'LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_groups.tx_begroupsroles_isrole.description',
         'config' => [
             'type' => 'check',
+            'renderType' => 'checkboxToggle',
+            'items' => [
+                [
+                    'label' => '',
+                ],
+            ],
+            'default' => 0,
+        ],
+    ],
+    'tx_begroupsroles_subgroup' => [
+        'exclude' => 1,
+        'label' => 'LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_groups.tx_begroupsroles_subgroup',
+        'description' => 'LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_groups.tx_begroupsroles_subgroup.description',
+        'config' => [
+            'type' => 'check',
+            'renderType' => 'checkboxToggle',
+            'items' => [
+                [
+                    'label' => '',
+                ],
+            ],
             'default' => 0,
         ],
     ],
 ];
 ExtensionManagementUtility::addTCAcolumns('be_groups', $tempColumns);
-ExtensionManagementUtility::addFieldsToPalette('be_groups', 'tx_begroupsroles', 'tx_begroupsroles_isrole');
+ExtensionManagementUtility::addFieldsToPalette('be_groups', 'tx_begroupsroles', 'tx_begroupsroles_isrole, tx_begroupsroles_subgroup');
 ExtensionManagementUtility::addToAllTCAtypes('be_groups', '--palette--;LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_groups.tx_begroupsroles_title;tx_begroupsroles', '', 'after:subgroup');

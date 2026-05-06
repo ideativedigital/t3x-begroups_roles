@@ -11,6 +11,12 @@ $tempColumns = [
         'description' => 'LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_users.tx_begroupsroles_enabled.description',
         'config' => [
             'type' => 'check',
+            'renderType' => 'checkboxToggle',
+            'items' => [
+                [
+                    'label' => '',
+                ],
+            ],
             'default' => 0,
         ],
     ],
@@ -20,6 +26,12 @@ $tempColumns = [
         'description' => 'LLL:EXT:begroups_roles/Resources/Private/Language/locallang_db.xlf:be_users.tx_begroupsroles_limit.description',
         'config' => [
             'type' => 'check',
+            'renderType' => 'checkboxToggle',
+            'items' => [
+                [
+                    'label' => '',
+                ],
+            ],
             'default' => 0,
         ],
     ],

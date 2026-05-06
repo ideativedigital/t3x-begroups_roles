@@ -89,7 +89,7 @@ class RoleSwitcher implements ToolbarItemInterface
 
         $queryBuilder = $this->connection->createQueryBuilder();
         $expressionBuilder = $queryBuilder->expr();
-        $rows = $queryBuilder->select('uid', 'title')
+        $rows = $queryBuilder->select('uid', 'title', 'tx_begroupsroles_subgroup', 'subgroup')
             ->from($this->backendUser->usergroup_table)
             ->where(
                 // Restrict selection to groups the user is part of
@@ -100,7 +100,7 @@ class RoleSwitcher implements ToolbarItemInterface
                         ArrayParameterType::INTEGER
                     )
                 ),
-                // Restrict to group that have been marked as roles
+                // Restrict to groups that have been marked as roles
                 $expressionBuilder->eq(
                     'tx_begroupsroles_isrole',
                     $queryBuilder->createNamedParameter(1, \PDO::PARAM_INT)
@@ -110,7 +110,29 @@ class RoleSwitcher implements ToolbarItemInterface
             ->executeQuery()
             ->fetchAllAssociative();
 
-        $this->groups = array_combine(array_map('intval', array_column($rows, 'uid')), $rows);
+        // Collect all subgroups from groups that have been marked as excluding subgroups
+        $excludedGroups = [];
+        foreach ($rows as $row) {
+            if ((int)$row['tx_begroupsroles_subgroup'] === 1) {
+                $excludedGroups = array_merge(
+                    $excludedGroups,
+                    explode(',', $row['subgroup'])
+                );
+            }
+        }
+        $excludedGroups = array_unique($excludedGroups);
+        $excludedGroups = array_map('intval', $excludedGroups);
+
+        // Assemble list of groups, taking excluded groups into account
+        foreach ($rows as $row) {
+            $uid = (int)$row['uid'];
+            if (!in_array($uid, $excludedGroups, true)) {
+                $this->groups[] = [
+                    'uid' => $uid,
+                    'title' => $row['title'],
+                ];
+            }
+        }
 
         return !empty($this->groups);
     }

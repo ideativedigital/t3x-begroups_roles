@@ -13,6 +13,13 @@
 			<trans-unit id="be_groups.tx_begroupsroles_isrole.description">
 				<target>Ajoute ce groupe à la liste des rôles qu'un utilisateur pourra prendre.</target>
 			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_subgroup">
+				<target>Exclure les sous-groupes</target>
+			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_subgroup.description">
+				<source>Subgroups of this group which are also roles will not be displayed individually for selection.</source>
+				<target>Les sous-groupes de ce groupe, qui sont aussi des rôles, n'apparaissent pas individuellement dans le sélecteur.</target>
+			</trans-unit>
 			<trans-unit id="be_users.tx_begroupsroles_title">
 				<target>Rôles de l'utilisateur backend</target>
 			</trans-unit>

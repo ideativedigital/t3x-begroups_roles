@@ -13,6 +13,12 @@
 			<trans-unit id="be_groups.tx_begroupsroles_isrole.description">
 				<source>Adds this groups to the list of roles the user can take on.</source>
 			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_subgroup">
+				<source>Exclude subgroups</source>
+			</trans-unit>
+			<trans-unit id="be_groups.tx_begroupsroles_subgroup.description">
+				<source>Subgroups of this group which are also roles will not be displayed individually for selection.</source>
+			</trans-unit>
 			<trans-unit id="be_users.tx_begroupsroles_title">
 				<source>Backend user roles</source>
 			</trans-unit>
