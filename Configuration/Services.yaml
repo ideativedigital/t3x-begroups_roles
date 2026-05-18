@@ -8,5 +8,11 @@ services:
     resource: '../Classes/*'
 
   IchHabRecht\BegroupsRoles\Backend\ToolbarItems\RoleSwitcher:
+    public: true
+    shared: false
     tags:
      - name: backend.toolbar.item
+
+  IchHabRecht\BegroupsRoles\Hook\SwitchUserRoleHook:
+    public: true
+    shared: false

@@ -45,14 +45,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SwitchUserRoleHook
 {
     protected BackendUserAuthentication $backendUser;
-    protected Connection $connection;
 
     public function __construct(
-        BackendUserAuthentication $backendUser = null,
-        Connection $connection = null
+        protected ConnectionPool $connection
     ) {
-        $this->backendUser = $backendUser ?: $GLOBALS['BE_USER'];
-        $this->connection = $connection ?: GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($this->backendUser->user_table);
+        $this->backendUser = $GLOBALS['BE_USER'];
     }
 
     /**
@@ -80,7 +77,7 @@ class SwitchUserRoleHook
                 )
             );
             // Store the list of groups the user is part of (direct or inherited)
-            $queryBuilder = $this->connection->createQueryBuilder();
+            $queryBuilder = $this->connection->getQueryBuilderForTable($this->backendUser->user_table);
             $queryBuilder->update($this->backendUser->user_table)
                 ->where(
                     $queryBuilder->expr()->eq(
@@ -94,7 +91,7 @@ class SwitchUserRoleHook
 
         $possibleUsergroups = GeneralUtility::intExplode(',', $this->backendUser->user['tx_begroupsroles_groups'] ?? '', true);
         if (empty($role) && !empty($this->backendUser->user['tx_begroupsroles_limit'])) {
-            $queryBuilder = $this->connection->createQueryBuilder();
+            $queryBuilder = $this->connection->getQueryBuilderForTable($this->backendUser->user_table);
             $expressionBuilder = $queryBuilder->expr();
             $rows = $queryBuilder->select('uid')
                 ->from($this->backendUser->usergroup_table)
@@ -162,7 +159,7 @@ class SwitchUserRoleHook
      */
     protected function getUsergroups(string $groupList, array $processedUsergroups = []): array
     {
-        $queryBuilder = $this->connection->createQueryBuilder();
+        $queryBuilder = $this->connection->getQueryBuilderForTable($this->backendUser->user_table);
         $queryBuilder->getRestrictions()->add(GeneralUtility::makeInstance(HiddenRestriction::class));
         $expressionBuilder = $queryBuilder->expr();
         $statement = $queryBuilder->select('uid', 'subgroup')

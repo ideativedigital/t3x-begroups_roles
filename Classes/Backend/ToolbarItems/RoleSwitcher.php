@@ -29,7 +29,6 @@ namespace IchHabRecht\BegroupsRoles\Backend\ToolbarItems;
  ***************************************************************/
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -50,27 +49,18 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class RoleSwitcher implements ToolbarItemInterface
 {
     protected BackendUserAuthentication $backendUser;
-    protected Connection $connection;
-    private IconFactory $iconFactory;
     protected LanguageService $languageService;
-    protected PageRenderer $pageRenderer;
-    protected UriBuilder $uriBuilder;
     protected array $groups = [];
     protected int $role = 0;
 
     public function __construct(
-        Connection $connection = null,
-        IconFactory $iconFactory = null,
-        $languageService = null,
-        PageRenderer $pageRenderer = null,
-        UriBuilder $uriBuilder = null
+        protected ConnectionPool $connection,
+        protected IconFactory $iconFactory,
+        protected PageRenderer $pageRenderer,
+        protected UriBuilder $uriBuilder
     ) {
         $this->backendUser = $GLOBALS['BE_USER'];
-        $this->connection = $connection ?: GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionForTable($this->backendUser->user_table);
-        $this->iconFactory = $iconFactory ?: GeneralUtility::makeInstance(IconFactory::class);
-        $this->languageService = $languageService ?: $GLOBALS['LANG'];
-        $this->pageRenderer = $pageRenderer ?: GeneralUtility::makeInstance(PageRenderer::class);
-        $this->uriBuilder = $uriBuilder ?: GeneralUtility::makeInstance(UriBuilder::class);
+        $this->languageService = $GLOBALS['LANG'];
     }
 
     /**
@@ -87,7 +77,7 @@ class RoleSwitcher implements ToolbarItemInterface
 
         $this->role = (int)$this->backendUser->getSessionData('tx_begroupsroles_role');
 
-        $queryBuilder = $this->connection->createQueryBuilder();
+        $queryBuilder = $this->connection->getQueryBuilderForTable($this->backendUser->user_table);
         $expressionBuilder = $queryBuilder->expr();
         $rows = $queryBuilder->select('uid', 'title', 'tx_begroupsroles_subgroup', 'subgroup')
             ->from($this->backendUser->usergroup_table)
