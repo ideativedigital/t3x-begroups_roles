@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class SwitchUserRoleHook
 {
-    protected BackendUserAuthentication $backendUser;
+    protected ?BackendUserAuthentication $backendUser = null;
 
     public function __construct(
         protected ConnectionPool $connection

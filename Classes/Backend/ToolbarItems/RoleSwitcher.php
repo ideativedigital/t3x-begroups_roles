@@ -48,7 +48,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RoleSwitcher implements ToolbarItemInterface
 {
-    protected BackendUserAuthentication $backendUser;
+    protected ?BackendUserAuthentication $backendUser = null;
     protected LanguageService $languageService;
     protected array $groups = [];
     protected int $role = 0;
